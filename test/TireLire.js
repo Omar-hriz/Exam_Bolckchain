@@ -36,4 +36,12 @@ describe.only("Test contact",async() =>{
         const balances = await contract.balances(accounts[0].address);
         expect(balances).to.be.eq(ethers.utils.parseEther("0.1"));
     })
+
+    it("You can only deposit once", async() => {
+        await contract.connect(accounts[0]).depositFunds({value: ethers.utils.parseEther("0.1")});
+        const before = await ethers.provider.getBalance(contract.address);
+        await contract.connect(accounts[0]).depositFunds({value: ethers.utils.parseEther("0.1")});
+        const after = await ethers.provider.getBalance(contract.address);
+        expect(before).to.be.eq(after);
+    })
 })
