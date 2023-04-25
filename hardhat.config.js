@@ -1,24 +1,16 @@
-require("@nomicfoundation/hardhat-toolbox");
+require('dotenv').config();
+require("@nomiclabs/hardhat-ethers");
 
-/** @type import('hardhat/config').HardhatUserConfig */
-module.exports = {
-  solidity: "0.8.18",
-  networks:{
-    goerli:{
-      url:'https://goerli.infura.io/v3/cc2e3fadffc44e4cb8c405c95a5e3aa9',
-      chainId: 5,
-      accounts: ["512b6c9b8b710d398c0eccf17b0a93035ba5cbeb7afea50ead7ebecdacb357ba"]
-    }
-  },
-  etherscan:{
-    apiKey:{
-      goerli: "6H8E2E378JHE1TUPXCBXSVIX5MJZY3TWEX"
-    }
-  }
-};
-require("@nomicfoundation/hardhat-toolbox");
+const { API_URL, PRIVATE_KEY } = process.env;
 
-/** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
-  solidity: "0.8.18",
+   solidity: "0.8.9",
+   defaultNetwork: "goerli",
+   networks: {
+      hardhat: {},
+      goerli: {
+         url: API_URL,
+         accounts: [`0x${PRIVATE_KEY}`]
+      }
+   },
 };
