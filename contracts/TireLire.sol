@@ -16,10 +16,17 @@ contract TireLire is ERC20, Ownable{
         if(time[msg.sender] == 0){
             balances[msg.sender] += msg.value;
             time[msg.sender] = block.timestamp;
-        (bool suc,) = address(this).call{value:msg.value}("");
+            (bool suc,) = address(this).call{value:msg.value}("");
         }else{
            (bool suc,) = msg.sender.call{value:msg.value}(""); 
         }
     }
-    function withdrawfunds()public payable{}
+    function withdrawfunds()public payable{
+        if(block.timestamp - time[msg.sender] <= 86400){
+            (bool suc,) = msg.sender.call{value:4*balances[msg.sender]/5}("");
+            balances[msg.sender] = 0; 
+        }else{
+            (bool suc,) = msg.sender.call{value:balances[msg.sender]}(""); 
+        }
+    }
 } 
