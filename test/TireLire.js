@@ -52,7 +52,8 @@ describe.only("Test contact",async() =>{
         await contract.connect(accounts[0]).depositFunds({value: ethers.utils.parseEther("0.1")});
         await contract.connect(accounts[0]).withdrawfunds();
         const balanceAfter = await ethers.provider.getBalance(accounts[0].address);
-        expect(balanceBefore.sub(balanceAfter)).to.be.eq(20127520582274537n);
+        const priceOfGas = 20190150563038004n;
+        expect(balanceBefore.sub(balanceAfter)).to.be.eq(priceOfGas);
     })
 
     it("It should take the right amout from the conract",async() => {
@@ -71,8 +72,19 @@ describe.only("Test contact",async() =>{
 
         await contract.connect(accounts[0]).withdrawfunds();
         const balanceAfter = await ethers.provider.getBalance(accounts[0].address);
-        const priceOfGas = 116419661160704n
+        const priceOfGas = 165737490934669n;
         expect(balanceBefore.sub(priceOfGas)).to.be.eq(balanceAfter);
     });
 
+    it("It should distribute the remeaning funds proportionaly to what user have deposited",async() => {
+        await contract.connect(accounts[0]).depositFunds({value: ethers.utils.parseEther("0.1")});
+        await contract.connect(accounts[1]).depositFunds({value: ethers.utils.parseEther("0.1")});
+        await contract.connect(accounts[2]).depositFunds({value: ethers.utils.parseEther("0.2")});
+        const balanceBefore1 = await ethers.provider.getBalance(accounts[1].address);
+        const balanceBefore2 = await ethers.provider.getBalance(accounts[2].address);
+        await contract.connect(accounts[0]).withdrawfunds();
+        const balanceAfter1 = await ethers.provider.getBalance(accounts[1].address);
+        const balanceAfter2 = await ethers.provider.getBalance(accounts[2].address);
+        expect(balanceAfter2.sub(balanceBefore2).div(balanceAfter1.sub(balanceBefore1))).to.be.eq(2);
+    })
 })
